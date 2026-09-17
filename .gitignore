@@ -83,5 +83,5 @@ alpha_hook/test_sbp_getqrcd.py
 dump_project.py
 
 # === Docs & Internal ===
-docs/
+docs/gitignore
 .agentenv/

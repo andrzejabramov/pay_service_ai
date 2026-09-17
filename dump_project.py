@@ -33,10 +33,10 @@ DEFAULT_TARGET_DIRS = [
     # "auth",
     # "users",
     # "webhook_2can",
-    # "alpha_hook",
+    "alpha_hook/src",
     # Базы данных и SQL
-    "sql",
-    "db_schemas",
+    #"sql",
+    #"db_schemas",
     # "payment_reply",
     # Скрипты и утилиты
     # "ai_scripts",
