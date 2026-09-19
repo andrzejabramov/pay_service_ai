@@ -18,7 +18,7 @@ from src.services.users import (
     bulk_create_users_from_file,
 )
 from src.db.redis import redis
-from src.cashe.user_cashe import (
+from src.cache.user_cashe import (
     get_user_by_identifier_cached,
 )
 from src.utils.json_utils import maybe_json_loads, maybe_json_dumps

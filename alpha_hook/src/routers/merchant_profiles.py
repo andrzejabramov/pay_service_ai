@@ -5,9 +5,9 @@ from uuid import UUID
 from typing import List
 from loguru import logger
 
-from alpha_hook.src.dependencies.db import get_db_pool
-from alpha_hook.src.dependencies.auth import require_fintech_manager
-from alpha_hook.src.schemas.merchant_profiles import (
+from src.dependencies.db import get_db_pool
+from src.dependencies.auth import require_fintech_manager
+from src.schemas.merchant_profiles import (
     MerchantProfileCreate,
     MerchantProfileRead,
     BindQrRequest,

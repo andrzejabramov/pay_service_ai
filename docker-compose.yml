@@ -7,8 +7,6 @@ services:
   pg-master:
     image: postgres:${POSTGRES_VERSION}
     container_name: pg-master
-    env_file:
-      - .env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -34,8 +32,6 @@ services:
   pg-replica:
     image: postgres:${POSTGRES_VERSION}
     container_name: pg-replica
-    env_file:
-      - .env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -96,9 +92,17 @@ services:
     container_name: auth
     ports:
       - "8001:8001"
-    env_file:
-      - .env
-      - ./auth/.env
+    environment:
+      - POSTGRES_HOST=pg-master
+      - REDIS_HOST=redis
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
       pg-master:
         condition: service_healthy
@@ -114,9 +118,18 @@ services:
     container_name: users
     ports:
       - "8000:8000"
-    env_file:
-      - .env
-      - ./users/.env
+    environment:
+      - POSTGRES_HOST=pg-master
+      - POSTGRES_REPLICA_HOST=pg-replica
+      - RABBITMQ_HOST=rabbitmq
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - DATABASE_WRITE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pg-master:5432/${POSTGRES_DB}
+      - DATABASE_READ_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pg-replica:5432/${POSTGRES_DB}
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672//
     depends_on:
       pg-master:
         condition: service_healthy
@@ -136,9 +149,15 @@ services:
     container_name: webhook_2can
     ports:
       - "8002:8002"
-    env_file:
-      - .env
-      - ./webhook_2can/.env
+    environment:
+      - POSTGRES_HOST=pg-master
+      - RABBITMQ_HOST=rabbitmq
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_URL=${RABBITMQ_URL}
     depends_on:
       pg-master:
         condition: service_healthy
@@ -160,26 +179,38 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_started
-    env_file:
-      - .env
-      - ./alpha_hook/.env
     environment:
-      # Явно указываем хосты (они не в .env)
       - POSTGRES_HOST=pg-master
       - POSTGRES_REPLICA_HOST=pg-replica
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - APP_READER_USER=${APP_READER_USER}
+      - APP_READER_PASSWORD=${APP_READER_PASSWORD}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS}
+      - ROUTER_API_KEY=${ROUTER_API_KEY}
     ports:
       - "8003:8000" # Только для локальной разработки!
-
     volumes:
       - ./alpha_hook/logs:/app/logs
       - ./alpha_hook/certs:/app/certs:ro
-      - ./alpha_hook/.env:/app/.env:ro
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/webhook/test"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/webhook/test')",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -197,9 +228,14 @@ services:
     container_name: contracts
     ports:
       - "8004:8004"
-    env_file:
-      - .env
-      - ./contracts/.env
+    environment:
+      - POSTGRES_HOST=pg-master
+      - POSTGRES_REPLICA_HOST=pg-replica
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      # Добавляем JWT (дублируем регистр)
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     depends_on:
       pg-master:
         condition: service_healthy

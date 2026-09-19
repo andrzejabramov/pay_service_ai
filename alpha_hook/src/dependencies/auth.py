@@ -1,8 +1,8 @@
 import jwt
 from fastapi import Depends, HTTPException, status, Request
 from asyncpg import Pool
-from alpha_hook.src.core.config import settings
-from alpha_hook.src.dependencies.db import get_db_pool
+from src.core.config import settings
+from src.dependencies.db import get_db_pool
 
 
 async def require_fintech_manager(
