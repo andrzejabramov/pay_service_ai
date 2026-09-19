@@ -1,0 +1,8 @@
+reation_rules:
+  # Все .env файлы (корневой + сервисные)
+  - path_regex: \.env$
+    age: age1e306uw9fgq8mxmxuvxakyj7dzxpstmwh8v3xs6mht588exfkxqpsnrrp8m
+
+  # Все сертификаты и ключи в alpha_hook/certs/
+  - path_regex: ^alpha_hook/certs/.*\.(crt|key|pem)$
+    age: age1e306uw9fgq8mxmxuvxakyj7dzxpstmwh8v3xs6mht588exfkxqpsnrrp8m

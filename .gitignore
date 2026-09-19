@@ -1,27 +1,17 @@
-# === Environment & Secrets ===
-.env
-.env.*
-!.env.example
-alpha_hook/.env
-alpha_hook/.env.*
-!alpha_hook/.env.example
+# ============================================
+# ПРИВАТНЫЕ КЛЮЧИ SOPS (НИКОГДА не коммитить!)
+# ============================================
+.config/sops/age/keys.txt
+sops-keys.txt
+*.agekey
 
-# === Certificates & Keys (Никогда не коммитим!) ===
-alpha_hook/certs/
-*.crt
-*.key
-*.pem
-*.p12
-*.pfx
-*.zip
-
-# === Logs ===
-alpha_hook/logs/
-!alpha_hook/logs/.gitkeep
-*.log
-*.log.zip
-
-# === Python ===
+# ============================================
+# СРЕДА РАЗРАБОТКИ
+# ============================================
+.venv/
+venv/
+ENV/
+env/
 __pycache__/
 *.py[cod]
 *$py.class
@@ -38,14 +28,37 @@ MANIFEST
 .mypy_cache/
 .ruff_cache/
 .pytype/
+.agentenv/
 
-# === Virtual Environments ===
-.venv/
-venv/
-ENV/
-env/
+# ============================================
+# IDE & РЕДАКТОРЫ
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+*.sublime-workspace
 
-# === Node.js / Frontend ===
+# ============================================
+# СИСТЕМНЫЕ ФАЙЛЫ
+# ============================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================
+# ЛОГИ
+# ============================================
+alpha_hook/logs/
+!alpha_hook/logs/.gitkeep
+*.log
+*.log.zip
+
+# ============================================
+# NODE.JS / FRONTEND
+# ============================================
 node_modules/
 .pnpm-store/
 .pnpm-debug.log*
@@ -61,27 +74,16 @@ coverage/
 .nuxt/
 .output/
 
-# === IDE & Editors ===
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-.project
-*.sublime-workspace
-
-# === OS Files ===
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# === Project Specific (Temp/Untracked) ===
+# ============================================
+# СПЕЦИФИЧНО ДЛЯ ПРОЕКТА (временное/не коммитим)
+# ============================================
 db_schemas/
 parcing/
 alpha_hook/scripts/
 alpha_hook/test_sbp_getqrcd.py
 dump_project.py
 
-# === Docs & Internal ===
+# ============================================
+# ДОКУМЕНТАЦИЯ (внутренняя)
+# ============================================
 docs/gitignore
-.agentenv/
